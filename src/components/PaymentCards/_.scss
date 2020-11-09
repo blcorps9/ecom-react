@@ -1,0 +1,14 @@
+.payment-options {
+  background-color: $color-dodgerblue;
+  border-radius: 8px;
+  height: 26px;
+  display: flex;
+
+  .payment-opts {
+    margin: 4px;
+
+    svg {
+      background-color: $color-dodgerblue;
+    }
+  }
+}

@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 
+import Routes from "./Routes";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Spinner from "./components/Spinner";
 
-const AppBody = () => (
-  <div className="app-body" style={{ flex: 1, width: "100%" }}>
-    App Body
-  </div>
-);
+const AppBody = () => {
+  return (
+    <div className="app-body" style={{ height: "auto", width: "100%" }}>
+      <Routes />
+    </div>
+  );
+};
 
 class App extends Component {
   state = {

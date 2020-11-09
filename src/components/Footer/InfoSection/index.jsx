@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-export default function InfoSection(props) {
+export default function InfoSection() {
   return (
     <div className="footer-info-section">
       <div className="contact-us">
@@ -10,7 +11,12 @@ export default function InfoSection(props) {
         <div className="social-links">Bangalore, Karnataka</div>
       </div>
       <div className="infomation">
-        <div className="about-us">Abount</div>
+        <Link className="about-us d-block" to="/about-us">
+          About Us
+        </Link>
+        <Link className="contact-us d-block" to="/contact-us">
+          Contact Us
+        </Link>
         <div className="delivery-info">Delivery Information</div>
         <div className="privacy-policy">Privacy Policy</div>
         <div className="faqs">FAQs</div>
