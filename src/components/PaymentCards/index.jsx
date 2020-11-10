@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function PaymentCards({ cards = [] }) {
   return (
     <div className="payment-options">
-      {cards.map(({ icon, id, size, title }) => (
+      {cards.map(({ id, size, icon, title }) => (
         <FontAwesomeIcon
           key={id}
           icon={icon}
