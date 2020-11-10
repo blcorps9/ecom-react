@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SITE_NAME } from "../../config";
 
-export default function Header() {
+export default function Header({ userName }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-primary sticky-top">
       <NavLink className="navbar-brand" to="/">
@@ -13,6 +13,14 @@ export default function Header() {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
+          <li className="nav-item">
+            <NavLink className="nav-link" to="/my-account">
+              {userName ? `Hi, ${userName}` : "My Account"}{" "}
+              <FontAwesomeIcon
+                icon={{ prefix: "fa", iconName: "user-circle" }}
+              />
+            </NavLink>
+          </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/" ex>
               Home
@@ -28,14 +36,7 @@ export default function Header() {
               Sale
             </NavLink>
           </li>
-          <li className="nav-item">
-            <NavLink className="nav-link" to="/my-account">
-              My Account{" "}
-              <FontAwesomeIcon
-                icon={{ prefix: "fa", iconName: "user-circle" }}
-              />
-            </NavLink>
-          </li>
+
           <li className="nav-item">
             <NavLink className="nav-link" to="/my-cart">
               Cart{" "}
