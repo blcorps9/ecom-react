@@ -22,7 +22,7 @@ export default function Header({ userName }) {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/" ex>
+            <NavLink className="nav-link" to="/" exact>
               Home
             </NavLink>
           </li>
