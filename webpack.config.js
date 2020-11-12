@@ -77,6 +77,7 @@ module.exports = {
         target: proxyTarget,
         pathRewrite: { "^/api": "" },
       },
+      "/images": proxyTarget,
     },
   },
 };

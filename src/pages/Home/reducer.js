@@ -1,13 +1,23 @@
-import { INCREMENT, DECREMENT } from "./actions";
+import {
+  GET_PRODUCTS_REQUEST,
+  GET_PRODUCTS_SUCCESS,
+  GET_PRODUCTS_FAILURE,
+} from "./actions";
 
-const initState = 0;
+const initState = {
+  products: [],
+  error: null,
+  isFetching: false,
+};
 
-export default function counter(state = initState, action) {
+export default function home(state = initState, action) {
   switch (action.type) {
-    case INCREMENT:
-      return state + 1;
-    case DECREMENT:
-      return state - 1;
+    case GET_PRODUCTS_REQUEST:
+      return { ...state, error: null, isFetching: true };
+    case GET_PRODUCTS_SUCCESS:
+      return { ...state, products: action.payload, isFetching: false };
+    case GET_PRODUCTS_FAILURE:
+      return { ...state, error: action.error, isFetching: false };
     default:
       return state;
   }
