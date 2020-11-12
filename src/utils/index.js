@@ -7,6 +7,13 @@ export function uuidv4() {
   });
 }
 
+export function formatPrice(price) {
+  return Number(price).toLocaleString("en-IN", {
+    style: "currency",
+    currency: "INR",
+  });
+}
+
 export async function makeRequest(url = "", opt = {}) {
   const config = {
     method: "GET",
