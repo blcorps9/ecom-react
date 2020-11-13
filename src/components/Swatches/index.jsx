@@ -14,6 +14,7 @@ export default function Swatches({ heading, items, type, onClick }) {
             <div
               key={i}
               onClick={onClick}
+              data-value={item.value}
               className={cx("swatch", type, { selected: item.isSelected })}
             >
               <div style={style}>{val}</div>
