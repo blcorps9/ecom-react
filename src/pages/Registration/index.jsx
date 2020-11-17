@@ -36,7 +36,7 @@ export default class RegistrationPage extends Component {
 
           const urlParams = new URLSearchParams(redirectTo);
 
-          this.props.history.push(urlParams.get("redirectTo"));
+          this.props.history.push(urlParams.get("redirectTo") || "/");
         } else {
           const { message } = await r.json();
           this.setState({ errorMessage: message });
