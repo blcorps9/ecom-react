@@ -6,10 +6,10 @@ import _intersection from "lodash/intersection";
 
 import Accordion from "../../components/Accordion";
 import ProductCard from "../../components/ProductCard";
+import Carousel from "../../components/Carousel";
 
 import { getProductsRequest } from "./actions";
-
-// TODO: Carousel - Monday
+import { getUserCart } from "../../components/ProductCard/actions";
 
 class HomePage extends Component {
   state = {
@@ -27,6 +27,7 @@ class HomePage extends Component {
 
   componentDidMount() {
     this.props.getProductsRequest();
+    this.props.getUserCart();
   }
 
   onSelectFilter = (e) => {
@@ -100,7 +101,8 @@ class HomePage extends Component {
               <div className="input-group">
                 <div className="input-group-prepend">
                   <div className="input-group-text">
-                    <input type="checkbox" checked={isChecked} /> &nbsp;&nbsp;
+                    <input type="checkbox" defaultChecked={isChecked} />
+                    &nbsp;&nbsp;
                     {b}
                   </div>
                 </div>
@@ -113,7 +115,7 @@ class HomePage extends Component {
   };
 
   render() {
-    const { products, now } = this.state;
+    const { products } = this.state;
     const { leftNav, error, isFetching } = this.props.home;
 
     return (
@@ -131,6 +133,19 @@ class HomePage extends Component {
           />
         </div>
         <div className="col-10 h-100">
+          <div className="row" style={{ height: "400px", margin: "24px 9px" }}>
+            <Carousel
+              auto
+              delay={3000}
+              slides={[
+                { bg: `url(https://loremflickr.com/1000/400?1)` },
+                { bg: `url(https://loremflickr.com/1000/400?2)` },
+                { bg: `url(https://loremflickr.com/1000/400?3)` },
+                { bg: `url(https://loremflickr.com/1000/400?4)` },
+                { bg: `url(https://loremflickr.com/1000/400?5)` },
+              ]}
+            />
+          </div>
           <div className="row">
             {_map(products, (p) => (
               <div className="col-3" key={p.id}>
@@ -150,6 +165,6 @@ function mapStateToProps(state) {
   };
 }
 
-const mapDispatchToProps = { getProductsRequest };
+const mapDispatchToProps = { getProductsRequest, getUserCart };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
