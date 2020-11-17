@@ -9,3 +9,11 @@ $color-goldenrod: #daa520;
 $color-purple: #663399;
 $color-green: #058809;
 $color-pink: #df09e2;
+
+:root {
+  --color-dodgerblue: #{$color-dodgerblue};
+  --color-goldenrod: #{$color-goldenrod};
+  --color-purple: #{$color-purple};
+  --color-green: #{$color-green};
+  --color-pink: #{$color-pink};
+}

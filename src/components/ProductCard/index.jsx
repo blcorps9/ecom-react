@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import _get from "lodash/get";
+import { connect } from "react-redux";
 import _isEmpty from "lodash/isEmpty";
 
 import Swatches from "../Swatches";
-
+import { addToCart } from "./actions";
 import { formatPrice } from "../../utils";
 
-export default class ProductCard extends Component {
+class ProductCard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      quantity: 1,
       color: _get(props, ["colors", 0], ""),
       size: _get(props, ["sizes", 0], ""),
     };
@@ -34,7 +36,19 @@ export default class ProductCard extends Component {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log(" ATC =----> ", e);
+    const { id, price } = this.props;
+    const { color, size, quantity } = this.state;
+
+    const item = {
+      id,
+      price,
+      quantity,
+    };
+
+    if (color) item.color = color;
+    if (size) item.size = size;
+
+    this.props.addToCart(item);
   };
 
   render() {
@@ -98,3 +112,5 @@ export default class ProductCard extends Component {
     );
   }
 }
+
+export default connect(null, { addToCart })(ProductCard);
