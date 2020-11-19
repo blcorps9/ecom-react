@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import _get from "lodash/get";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import LoginForm from "../../components/LoginForm";
 
-import { makeRequest } from "../../utils";
+import { doLogin } from "../../store/actions/user";
 
-export default class LoginPage extends Component {
+class LoginPage extends Component {
   state = {
     errorMessage: "",
   };
@@ -22,32 +24,16 @@ export default class LoginPage extends Component {
       }
     }
 
-    makeRequest("/api/auth/login", { method: "POST", data: formData })
-      .then(async (r) => {
-        if (r.status === 200) {
-          const redirectTo =
-            _get(this.props, ["history", "location", "search"], "") ||
-            "?redirectTo=/";
-
-          const user = await r.json();
-
-          this.props.setUser(user.data);
-
-          const urlParams = new URLSearchParams(redirectTo);
-
-          this.props.history.push(urlParams.get("redirectTo"));
-        } else {
-          const { message } = await r.json();
-          this.setState({ errorMessage: message });
-        }
-      })
-      .catch((e) => {
-        this.setState({ errorMessage: e.message });
-      });
+    this.props.doLogin(formData);
   };
 
   render() {
+    const { isLoggedIn } = this.props;
     const { errorMessage } = this.state;
+
+    if (isLoggedIn) {
+      return <Redirect to="/" />;
+    }
 
     return (
       <div className="page login-page p-4">
@@ -70,3 +56,7 @@ export default class LoginPage extends Component {
     );
   }
 }
+
+export default connect((s) => ({ isLoggedIn: s.user.isLoggedIn }), { doLogin })(
+  LoginPage
+);

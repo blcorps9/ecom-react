@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import _get from "lodash/get";
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 
 import RegistrationForm from "../../components/RegistrationForm";
 
-import { makeRequest } from "../../utils";
+import { doRegistration } from "../../store/actions/user";
 
-export default class RegistrationPage extends Component {
+class RegistrationPage extends Component {
   state = {
     errorMessage: "",
   };
@@ -25,30 +27,22 @@ export default class RegistrationPage extends Component {
     // TODO: Replace with actual image
     formData.avatar = "/images/profile/avatar.png";
 
-    makeRequest("/api/auth/register", { method: "POST", data: formData })
-      .then(async (r) => {
-        if (r.status === 201) {
-          const redirectTo = _get(
-            this.props,
-            ["history", "location", "search"],
-            "?redirectTo=/"
-          );
+    const redirectTo =
+      _get(this.props, ["history", "location", "search"], "") ||
+      "?redirectTo=/";
 
-          const urlParams = new URLSearchParams(redirectTo);
+    const urlParams = new URLSearchParams(redirectTo);
 
-          this.props.history.push(urlParams.get("redirectTo") || "/");
-        } else {
-          const { message } = await r.json();
-          this.setState({ errorMessage: message });
-        }
-      })
-      .catch((e) => {
-        this.setState({ errorMessage: e.message });
-      });
+    this.props.doRegistration(formData, urlParams.get("redirectTo") || "/");
   };
 
   render() {
     const { errorMessage } = this.state;
+    const { isLoggedIn } = this.props;
+
+    if (isLoggedIn) {
+      return <Redirect to="/" />;
+    }
 
     return (
       <div className="page registration-page p-4">
@@ -71,3 +65,5 @@ export default class RegistrationPage extends Component {
     );
   }
 }
+
+export default connect(null, { doRegistration })(RegistrationPage);

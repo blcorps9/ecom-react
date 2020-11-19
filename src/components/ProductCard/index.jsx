@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import _get from "lodash/get";
 import { connect } from "react-redux";
 import _isEmpty from "lodash/isEmpty";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Swatches from "../Swatches";
-import { addToCart } from "./actions";
 import { formatPrice } from "../../utils";
+import { addToCart, onRemoveFromCart } from "./actions";
 
 class ProductCard extends Component {
   constructor(props) {
@@ -51,6 +52,13 @@ class ProductCard extends Component {
     this.props.addToCart(item);
   };
 
+  onRemoveFromCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.props.onRemoveFromCart(this.props.id);
+  };
+
   render() {
     const { color, size } = this.state;
     const {
@@ -61,6 +69,7 @@ class ProductCard extends Component {
       colors,
       sizes,
       price,
+      isInCart,
     } = this.props;
 
     return (
@@ -99,13 +108,23 @@ class ProductCard extends Component {
               />
             </div>
           )}
+          <div className="row flex-row align-items-center ">
+            <div className="col-12 p-0">{formatPrice(price)}</div>
+          </div>
           <div className="row cta m-0 flex-row align-items-center justify-content-between">
-            <div className="col-4 p-0">{formatPrice(price)}</div>
             <div className="col-8 p-0">
               <div onClick={this.onAddToCart} className="btn btn-primary">
                 Add to cart
               </div>
             </div>
+            {isInCart && (
+              <div className="col-4 p-0" onClick={this.onRemoveFromCart}>
+                <FontAwesomeIcon
+                  size="3x"
+                  icon={{ prefix: "far", iconName: "window-close" }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -113,4 +132,4 @@ class ProductCard extends Component {
   }
 }
 
-export default connect(null, { addToCart })(ProductCard);
+export default connect(null, { addToCart, onRemoveFromCart })(ProductCard);

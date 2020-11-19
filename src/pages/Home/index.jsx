@@ -9,7 +9,6 @@ import ProductCard from "../../components/ProductCard";
 import Carousel from "../../components/Carousel";
 
 import { getProductsRequest } from "./actions";
-import { getUserCart } from "../../components/ProductCard/actions";
 
 class HomePage extends Component {
   state = {
@@ -27,7 +26,6 @@ class HomePage extends Component {
 
   componentDidMount() {
     this.props.getProductsRequest();
-    this.props.getUserCart();
   }
 
   onSelectFilter = (e) => {
@@ -116,7 +114,9 @@ class HomePage extends Component {
 
   render() {
     const { products } = this.state;
-    const { leftNav, error, isFetching } = this.props.home;
+    const { home, cart } = this.props;
+    const { leftNav, error, isFetching } = home;
+    const itemsInCart = _map(_get(cart, ["items"]), "id");
 
     return (
       <div className="row justify-content-center">
@@ -149,7 +149,7 @@ class HomePage extends Component {
           <div className="row">
             {_map(products, (p) => (
               <div className="col-3" key={p.id}>
-                <ProductCard {...p} />
+                <ProductCard {...p} isInCart={itemsInCart.includes(p.id)} />
               </div>
             ))}
           </div>
@@ -162,9 +162,10 @@ class HomePage extends Component {
 function mapStateToProps(state) {
   return {
     home: state.home,
+    cart: state.user.cart,
   };
 }
 
-const mapDispatchToProps = { getProductsRequest, getUserCart };
+const mapDispatchToProps = { getProductsRequest };
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
