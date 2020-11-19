@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import _get from "lodash/get";
+import { connect } from "react-redux";
 
 import Routes from "./Routes";
 
@@ -7,11 +8,22 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Spinner from "./components/Spinner";
 
+import { getDashboard } from "./store/actions/user";
+
 class App extends Component {
   state = {
-    user: "",
     showSpinner: false,
   };
+
+  componentDidMount() {
+    this.props.getDashboard();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!prevProps.isLoggedIn && this.props.isLoggedIn) {
+      this.props.getDashboard();
+    }
+  }
 
   onShowSpinner = () => {
     this.setState({ showSpinner: true });
@@ -21,18 +33,18 @@ class App extends Component {
     this.setState({ showSpinner: false });
   };
 
-  setUser = (user) => {
-    this.setState({ user });
-  };
-
   render() {
-    const { showSpinner, user } = this.state;
+    const { showSpinner } = this.state;
+    const { user, isLoggedIn } = this.props;
 
     return (
       <div className="main-container">
-        <Header userName={_get(user, ["name"], "")} />
+        <Header
+          cartCount={user.cartCount}
+          userName={_get(user, ["profile", "name"], "")}
+        />
         <div className="app-body" style={{ height: "auto", width: "100%" }}>
-          <Routes setUser={this.setUser} user={user} />
+          <Routes user={user.profile} isLoggedIn={isLoggedIn} />
         </div>
         <Footer />
         <Spinner show={showSpinner} />
@@ -41,4 +53,9 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(
+  (s) => ({ user: s.user, isLoggedIn: s.user.isLoggedIn }),
+  {
+    getDashboard,
+  }
+)(App);

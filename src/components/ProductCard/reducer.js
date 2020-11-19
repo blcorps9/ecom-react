@@ -5,6 +5,9 @@ import {
   ADD_TO_CART_REQUEST,
   ADD_TO_CART_SUCCESS,
   ADD_TO_CART_FAILURE,
+  REMOVE_FROM_CART_REQUEST,
+  REMOVE_FROM_CART_SUCCESS,
+  REMOVE_FROM_CART_FAILURE,
 } from "./actions";
 
 const initState = {
@@ -26,6 +29,13 @@ export default function cart(state = initState, action) {
     case ADD_TO_CART_SUCCESS:
       return { ...state, data: action.payload, isFetching: false };
     case ADD_TO_CART_FAILURE:
+      return { ...state, error: action.error, isFetching: false };
+
+    case REMOVE_FROM_CART_REQUEST:
+      return { ...state, error: null, isFetching: true };
+    case REMOVE_FROM_CART_SUCCESS:
+      return { ...state, data: action.payload, isFetching: false };
+    case REMOVE_FROM_CART_FAILURE:
       return { ...state, error: action.error, isFetching: false };
 
     default:

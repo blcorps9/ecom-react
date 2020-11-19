@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SITE_NAME } from "../../config";
 
-export default function Header({ userName }) {
+export default function Header({ userName, cartCount }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-primary sticky-top">
       <NavLink className="navbar-brand" to="/">
@@ -43,6 +43,9 @@ export default function Header({ userName }) {
               <FontAwesomeIcon
                 icon={{ prefix: "fa", iconName: "shopping-cart" }}
               />
+              {cartCount > 0 && (
+                <span className="badge badge-danger">{cartCount}</span>
+              )}
             </NavLink>
           </li>
           <li className="nav-item">

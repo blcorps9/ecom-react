@@ -17,7 +17,7 @@ import "./main.scss";
 // Init SVG icon library
 library.add(fas, fab, far);
 
-const store = configureStore();
+const store = configureStore(history);
 
 ReactDOM.render(
   <Provider store={store}>

@@ -14,19 +14,13 @@ import MyAccountPage from "./pages/MyAccount";
 import LoginPage from "./pages/Login";
 import RegistrationPage from "./pages/Registration";
 
-export default function Routes({ setUser, user }) {
+export default function Routes({ user, isLoggedIn }) {
   return (
     <Switch>
       <Route path="/" exact render={(props) => <HomePage {...props} />}></Route>
 
-      <Route
-        path="/login"
-        render={(p) => <LoginPage {...p} setUser={setUser} />}
-      />
-      <Route
-        path="/register"
-        render={(p) => <RegistrationPage {...p} setUser={setUser} />}
-      />
+      <Route path="/login" render={(p) => <LoginPage {...p} />} />
+      <Route path="/register" render={(p) => <RegistrationPage {...p} />} />
       <Route path="/about-us" component={AboutUsPage} />
       <Route path="/contact-us" component={ContactUsPage} />
       <Route path="/sale" component={SalePage} />
@@ -34,13 +28,13 @@ export default function Routes({ setUser, user }) {
 
       {/** Session routes */}
       <Route path="/my-cart">
-        <CartPage isLoggedIn={!_isEmpty(user)} />
+        <CartPage isLoggedIn={isLoggedIn} />
       </Route>
       <Route path="/my-orders" component={OrdersPage}>
-        <OrdersPage isLoggedIn={!_isEmpty(user)} />
+        <OrdersPage isLoggedIn={isLoggedIn} />
       </Route>
       <Route path="/my-account" component={MyAccountPage}>
-        <MyAccountPage isLoggedIn={!_isEmpty(user)} />
+        <MyAccountPage isLoggedIn={isLoggedIn} />
       </Route>
 
       <Route component={NotFoundPage} />
