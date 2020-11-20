@@ -1,6 +1,7 @@
 import _get from "lodash/get";
 import { push } from "connected-react-router";
 
+import { showLoader, hideLoader } from "./common";
 import { makeRequest } from "../../utils";
 
 export const SET_USER_PROP_VALUE = "SET_USER_PROP_VALUE";
@@ -9,6 +10,10 @@ export const USER_LOGIN_REQUEST = "USER_LOGIN_REQUEST";
 export const USER_LOGIN_SUCCESS = "USER_LOGIN_SUCCESS";
 export const USER_LOGIN_FAILURE = "USER_LOGIN_FAILURE";
 
+export const USER_LOGOUT_REQUEST = "USER_LOGOUT_REQUEST";
+export const USER_LOGOUT_SUCCESS = "USER_LOGOUT_SUCCESS";
+export const USER_LOGOUT_FAILURE = "USER_LOGOUT_FAILURE";
+
 export const USER_REGISTER_REQUEST = "USER_REGISTER_REQUEST";
 export const USER_REGISTER_SUCCESS = "USER_REGISTER_SUCCESS";
 export const USER_REGISTER_FAILURE = "USER_REGISTER_FAILURE";
@@ -16,6 +21,17 @@ export const USER_REGISTER_FAILURE = "USER_REGISTER_FAILURE";
 export const GET_DASHBOARD_REQUEST = "GET_DASHBOARD_REQUEST";
 export const GET_DASHBOARD_SUCCESS = "GET_DASHBOARD_SUCCESS";
 export const GET_DASHBOARD_FAILURE = "GET_DASHBOARD_FAILURE";
+
+export const ADD_ITEM_TO_FAV_LIST_REQUEST = "ADD_ITEM_TO_FAV_LIST_REQUEST";
+export const ADD_ITEM_TO_FAV_LIST_SUCCESS = "ADD_ITEM_TO_FAV_LIST_SUCCESS";
+export const ADD_ITEM_TO_FAV_LIST_FAILURE = "ADD_ITEM_TO_FAV_LIST_FAILURE";
+
+export const REMOVE_ITEM_FROM_FAV_LIST_REQUEST =
+  "REMOVE_ITEM_FROM_FAV_LIST_REQUEST";
+export const REMOVE_ITEM_FROM_FAV_LIST_SUCCESS =
+  "REMOVE_ITEM_FROM_FAV_LIST_SUCCESS";
+export const REMOVE_ITEM_FROM_FAV_LIST_FAILURE =
+  "REMOVE_ITEM_FROM_FAV_LIST_FAILURE";
 
 export function setUserPropValue(payload) {
   return { type: SET_USER_PROP_VALUE, payload };
@@ -29,6 +45,16 @@ export function userLoginSuccess(payload) {
 }
 export function userLoginFailure(error) {
   return { type: USER_LOGIN_FAILURE, error };
+}
+
+export function userLogoutRequest() {
+  return { type: USER_LOGOUT_REQUEST };
+}
+export function userLogoutSuccess() {
+  return { type: USER_LOGOUT_SUCCESS };
+}
+export function userLogoutFailure(error) {
+  return { type: USER_LOGOUT_FAILURE, error };
 }
 
 export function userRegisterRequest() {
@@ -51,9 +77,30 @@ export function getDashboardFailure(error) {
   return { type: GET_DASHBOARD_FAILURE, error };
 }
 
+export function addToFavRequest() {
+  return { type: ADD_ITEM_TO_FAV_LIST_REQUEST };
+}
+export function addToFavSuccess(payload) {
+  return { type: ADD_ITEM_TO_FAV_LIST_SUCCESS, payload };
+}
+export function addToFavFailure(error) {
+  return { type: ADD_ITEM_TO_FAV_LIST_FAILURE, error };
+}
+
+export function removeFromFavRequest() {
+  return { type: REMOVE_ITEM_FROM_FAV_LIST_REQUEST };
+}
+export function removeFromFavSuccess(payload) {
+  return { type: REMOVE_ITEM_FROM_FAV_LIST_SUCCESS, payload };
+}
+export function removeFromFavFailure(error) {
+  return { type: REMOVE_ITEM_FROM_FAV_LIST_FAILURE, error };
+}
+
 export function doLogin(user) {
   return (dispatch, getState) => {
     dispatch(userLoginRequest());
+    dispatch(showLoader());
 
     return makeRequest("/api/auth/login", { method: "POST", data: user })
       .then(async (r) => {
@@ -65,6 +112,7 @@ export function doLogin(user) {
             _get(getState(), ["router", "location", "search"], "") ||
             "?redirectTo=/";
 
+          dispatch(hideLoader());
           dispatch(userLoginSuccess(resp.data));
 
           const urlParams = new URLSearchParams(redirectTo);
@@ -75,6 +123,8 @@ export function doLogin(user) {
         }
       })
       .catch((e) => {
+        dispatch(hideLoader());
+
         return dispatch(userLoginFailure(e));
       });
   };
@@ -83,11 +133,14 @@ export function doLogin(user) {
 export function doRegistration(user, redirectTo) {
   return (dispatch) => {
     dispatch(userRegisterRequest());
+    dispatch(showLoader());
 
     return makeRequest("/api/auth/register", { method: "POST", data: user })
       .then(async (r) => {
         const { status } = r;
         const resp = await r.json();
+
+        dispatch(hideLoader());
 
         if (status === 201) {
           dispatch(userRegisterSuccess(resp.data));
@@ -98,7 +151,37 @@ export function doRegistration(user, redirectTo) {
         }
       })
       .catch((e) => {
+        dispatch(hideLoader());
+
         return dispatch(userRegisterFailure(e));
+      });
+  };
+}
+
+export function doLogOut() {
+  return (dispatch) => {
+    dispatch(userLogoutRequest());
+    dispatch(showLoader());
+
+    return makeRequest("/api/auth/logout")
+      .then(async (r) => {
+        const { status } = r;
+        const resp = await r.json();
+
+        dispatch(hideLoader());
+
+        if (status === 200) {
+          dispatch(userLogoutSuccess());
+
+          return dispatch(push("/"));
+        } else {
+          return dispatch(userLogoutFailure(new Error(resp.message)));
+        }
+      })
+      .catch((e) => {
+        dispatch(hideLoader());
+
+        return dispatch(userLogoutFailure(e));
       });
   };
 }
@@ -106,11 +189,14 @@ export function doRegistration(user, redirectTo) {
 export function getDashboard() {
   return (dispatch) => {
     dispatch(getDashboardRequest());
+    dispatch(showLoader());
 
     return makeRequest("/api/users/dashboard")
       .then(async (r) => {
         const { status } = r;
         const resp = await r.json();
+
+        dispatch(hideLoader());
 
         if (status === 200) {
           return dispatch(getDashboardSuccess(resp.data));
@@ -119,7 +205,65 @@ export function getDashboard() {
         }
       })
       .catch((e) => {
+        dispatch(hideLoader());
+
         return dispatch(getDashboardFailure(e));
+      });
+  };
+}
+
+export function addToFav(item) {
+  return (dispatch) => {
+    dispatch(addToFavRequest());
+    dispatch(showLoader());
+
+    return makeRequest("/api/users/shopping-list/add", {
+      method: "POST",
+      data: item,
+    })
+      .then(async (r) => {
+        const { status } = r;
+        const resp = await r.json();
+
+        dispatch(hideLoader());
+
+        if (status === 200) {
+          return dispatch(addToFavSuccess(resp.data));
+        } else {
+          return dispatch(addToFavFailure(new Error(resp.message)));
+        }
+      })
+      .catch((e) => {
+        dispatch(hideLoader());
+
+        return dispatch(addToFavFailure(e));
+      });
+  };
+}
+export function removeFromFav(id) {
+  return (dispatch) => {
+    dispatch(removeFromFavRequest());
+    dispatch(showLoader());
+
+    return makeRequest(`/api/users/shopping-list/remove/${id}`, {
+      method: "DELETE",
+    })
+      .then(async (r) => {
+        const { status } = r;
+        const resp = await r.json();
+
+        dispatch(hideLoader());
+
+        if (status === 200) {
+          return dispatch(removeFromFavSuccess(resp.data));
+        } else {
+          return dispatch(removeFromFavFailure(new Error(resp.message)));
+        }
+      })
+      .catch((e) => {
+        dispatch(hideLoader());
+
+        return dispatch(removeFromFavFailure(e));
       });
   };
 }

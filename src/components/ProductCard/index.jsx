@@ -5,6 +5,7 @@ import _isEmpty from "lodash/isEmpty";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Swatches from "../Swatches";
+import FavoriteIcon from "../FavoriteIcon";
 import { formatPrice } from "../../utils";
 import { addToCart, onRemoveFromCart } from "./actions";
 
@@ -62,6 +63,7 @@ class ProductCard extends Component {
   render() {
     const { color, size } = this.state;
     const {
+      id,
       image,
       name,
       brand,
@@ -70,11 +72,20 @@ class ProductCard extends Component {
       sizes,
       price,
       isInCart,
+      isFavorite,
     } = this.props;
 
     return (
       <div className="product-card card m-2">
-        <img src={image} className="card-img-top" alt={`${name} - ${brand}`} />
+        <div className="card-img-top">
+          <img
+            className="prod-img"
+            src={image}
+            alt={`${name} - ${brand}`}
+            height="100%"
+          />
+          <FavoriteIcon isFavorite={isFavorite} item={{ id, color, size }} />
+        </div>
         <div className="card-body">
           <div className="row">
             <h5 className="card-title">

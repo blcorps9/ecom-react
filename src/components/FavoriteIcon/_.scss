@@ -1,0 +1,13 @@
+.fav-icon-container {
+  width: 36px;
+  height: 36px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+
+  &.is-fav,
+  &:hover {
+    color: $color-pink;
+  }
+}

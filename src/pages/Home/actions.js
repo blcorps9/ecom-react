@@ -4,18 +4,23 @@ import _range from "lodash/range";
 import _flatMap from "lodash/flatMap";
 import _compact from "lodash/compact";
 
-import { makeRequest, uuidv4 } from "../../utils";
+import { makeRequest } from "../../utils";
 
 export const GET_PRODUCTS_REQUEST = "GET_PRODUCTS_REQUEST";
 export const GET_PRODUCTS_SUCCESS = "GET_PRODUCTS_SUCCESS";
 export const GET_PRODUCTS_FAILURE = "GET_PRODUCTS_FAILURE";
 export const SET_LEFT_NAV = "SET_LEFT_NAV";
 
-export function getProductsRequest() {
+export function getProductsRequest(params) {
   return (dispatch) => {
     dispatch({ type: GET_PRODUCTS_REQUEST });
 
-    return makeRequest("/api/bns/search")
+    const queryParams = new URLSearchParams();
+    _map(params, (v, k) => {
+      queryParams.set(k, v);
+    });
+
+    return makeRequest(`/api/bns/search?${queryParams.toString()}`)
       .then(async (r) => {
         if (r.status === 200) {
           const resp = await r.json();
@@ -38,6 +43,12 @@ export function getProductsRequest() {
           if (colors.length) {
             leftNav.push({ header: "Colors", body: colors });
           }
+
+          leftNav.push({
+            header: "Sort By",
+            radioBtn: true,
+            body: ["A-Z", "Z-A", "Price Low-High", "Price High-Low"],
+          });
 
           dispatch(setLeftNav(leftNav));
 
