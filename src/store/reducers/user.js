@@ -33,6 +33,29 @@ export default function user(state = initState, action) {
         error: action.error,
       };
 
+    case actions.USER_LOGOUT_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.USER_LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        isLoggedIn: false,
+        profile: {},
+        cartCount: 0,
+        cart: {},
+        cards: [],
+        orders: [],
+        favList: {},
+        addresses: [],
+      };
+    case actions.USER_LOGOUT_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        isLoggedIn: false,
+        error: action.error,
+      };
+
     case actions.USER_REGISTER_REQUEST:
       return { ...state, isFetching: true };
     case actions.USER_REGISTER_SUCCESS:
@@ -64,6 +87,36 @@ export default function user(state = initState, action) {
         ...state,
         isFetching: false,
         isLoggedIn: false,
+        error: action.error,
+      };
+
+    case actions.ADD_ITEM_TO_FAV_LIST_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.ADD_ITEM_TO_FAV_LIST_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        favList: action.payload,
+      };
+    case actions.ADD_ITEM_TO_FAV_LIST_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.REMOVE_ITEM_FROM_FAV_LIST_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.REMOVE_ITEM_FROM_FAV_LIST_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        favList: action.payload,
+      };
+    case actions.REMOVE_ITEM_FROM_FAV_LIST_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
         error: action.error,
       };
 

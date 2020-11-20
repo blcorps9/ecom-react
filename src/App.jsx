@@ -11,10 +11,6 @@ import Spinner from "./components/Spinner";
 import { getDashboard } from "./store/actions/user";
 
 class App extends Component {
-  state = {
-    showSpinner: false,
-  };
-
   componentDidMount() {
     this.props.getDashboard();
   }
@@ -25,21 +21,13 @@ class App extends Component {
     }
   }
 
-  onShowSpinner = () => {
-    this.setState({ showSpinner: true });
-  };
-
-  onHideSpinner = () => {
-    this.setState({ showSpinner: false });
-  };
-
   render() {
-    const { showSpinner } = this.state;
-    const { user, isLoggedIn } = this.props;
+    const { user, isLoggedIn, showSpinner } = this.props;
 
     return (
       <div className="main-container">
         <Header
+          isLoggedIn={isLoggedIn}
           cartCount={user.cartCount}
           userName={_get(user, ["profile", "name"], "")}
         />
@@ -54,7 +42,11 @@ class App extends Component {
 }
 
 export default connect(
-  (s) => ({ user: s.user, isLoggedIn: s.user.isLoggedIn }),
+  (s) => ({
+    user: s.user,
+    isLoggedIn: s.user.isLoggedIn,
+    showSpinner: s.common.spinner,
+  }),
   {
     getDashboard,
   }

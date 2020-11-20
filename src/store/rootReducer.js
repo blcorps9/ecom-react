@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 import { connectRouter } from "connected-react-router";
 
 import user from "./reducers/user";
+import common from "./reducers/common";
 
 import home from "../pages/Home/reducer";
 
@@ -13,5 +14,6 @@ export default function rootReducer(history) {
     home,
     cart,
     user,
+    common,
   });
 }

@@ -1,10 +1,15 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SITE_NAME } from "../../config";
+import { doLogOut } from "../../store/actions/user";
+import { getProductsRequest } from "../../pages/Home/actions";
 
-export default function Header({ userName, cartCount }) {
+function Header(props) {
+  const { userName, cartCount, isLoggedIn } = props;
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-primary sticky-top">
       <NavLink className="navbar-brand" to="/">
@@ -53,6 +58,13 @@ export default function Header({ userName, cartCount }) {
               Orders
             </NavLink>
           </li>
+          {isLoggedIn && (
+            <li className="nav-item">
+              <span className="nav-link" onClick={props.doLogOut}>
+                Logout
+              </span>
+            </li>
+          )}
         </ul>
         <form
           className="form-inline my-2 my-lg-0"
@@ -63,7 +75,7 @@ export default function Header({ userName, cartCount }) {
             try {
               const query = e.target.query.value;
 
-              console.log(" SearchBoxQuery =----> ", query);
+              props.getProductsRequest({ name: query });
             } catch (e) {
               console.log(" SearchBoxError =----> ", e.message);
             }
@@ -86,3 +98,5 @@ export default function Header({ userName, cartCount }) {
     </nav>
   );
 }
+
+export default connect(null, { doLogOut, getProductsRequest })(Header);
