@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import _get from "lodash/get";
 import { connect } from "react-redux";
 import _isEmpty from "lodash/isEmpty";
+import { push } from "connected-react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Swatches from "../Swatches";
@@ -38,19 +39,24 @@ class ProductCard extends Component {
     e.preventDefault();
     e.stopPropagation();
 
-    const { id, price } = this.props;
-    const { color, size, quantity } = this.state;
+    const { id, price, isLoggedIn } = this.props;
 
-    const item = {
-      id,
-      price,
-      quantity,
-    };
+    if (isLoggedIn) {
+      const { color, size, quantity } = this.state;
 
-    if (color) item.color = color;
-    if (size) item.size = size;
+      const item = {
+        id,
+        price,
+        quantity,
+      };
 
-    this.props.addToCart(item);
+      if (color) item.color = color;
+      if (size) item.size = size;
+
+      this.props.addToCart(item);
+    } else {
+      this.props.push("/login");
+    }
   };
 
   onRemoveFromCart = (e) => {
@@ -73,6 +79,7 @@ class ProductCard extends Component {
       price,
       isInCart,
       isFavorite,
+      isLoggedIn,
     } = this.props;
 
     return (
@@ -84,7 +91,11 @@ class ProductCard extends Component {
             alt={`${name} - ${brand}`}
             height="100%"
           />
-          <FavoriteIcon isFavorite={isFavorite} item={{ id, color, size }} />
+          <FavoriteIcon
+            isFavorite={isFavorite}
+            isLoggedIn={isLoggedIn}
+            item={{ id, color, size }}
+          />
         </div>
         <div className="card-body">
           <div className="row">
@@ -143,4 +154,6 @@ class ProductCard extends Component {
   }
 }
 
-export default connect(null, { addToCart, onRemoveFromCart })(ProductCard);
+export default connect(null, { addToCart, onRemoveFromCart, push })(
+  ProductCard
+);

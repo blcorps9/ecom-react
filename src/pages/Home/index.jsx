@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import _get from "lodash/get";
 import _map from "lodash/map";
+import _isEmpty from "lodash/isEmpty";
 import _orderBy from "lodash/orderBy";
 import _intersection from "lodash/intersection";
 
@@ -26,31 +27,17 @@ class HomePage extends Component {
       prevProps.home.products.length !== products.length
     ) {
       this.setState({ products: _orderBy(products, "name", "asc") });
-    }
-
-    if (prevState.orderBy !== this.state.orderBy) {
-      this.setState((pS) => {
-        let sortedProducts = pS.products;
-
-        switch (pS.orderBy) {
-          case "A-Z":
-            sortedProducts = _orderBy(pS.products, "name", "asc");
-            break;
-          case "Z-A":
-            sortedProducts = _orderBy(pS.products, "name", "desc");
-            break;
-          case "Price Low-High":
-            sortedProducts = _orderBy(pS.products, "price", "asc");
-            break;
-          case "Price High-Low":
-            sortedProducts = _orderBy(pS.products, "price", "desc");
-            break;
-          default:
-            break;
-        }
-
-        return { products: sortedProducts };
+    } else if (
+      !_isEmpty(this.state.filters) &&
+      prevState.filters !== this.state.filters
+    ) {
+      this.setState({
+        products: this.getSortedProducts(this.getFilteredProducts(products)),
       });
+    } else if (prevState.orderBy !== this.state.orderBy) {
+      this.setState((pS) => ({
+        products: this.getSortedProducts(pS.products),
+      }));
     }
   }
 
@@ -74,49 +61,67 @@ class HomePage extends Component {
     const filter = e.currentTarget.getAttribute("data-filter");
     const value = e.currentTarget.getAttribute("data-value");
 
-    this.setState(
-      (pS) => {
-        const old = pS.filters[filter] || [];
+    this.setState((pS) => {
+      const old = pS.filters[filter] || [];
 
-        if (old.includes(value)) {
-          return {
-            filters: {
-              ...pS.filters,
-              [filter]: old.filter((f) => f !== value),
-            },
-          };
-        }
-
+      if (old.includes(value)) {
         return {
-          filters: { ...pS.filters, [filter]: [...old, value] },
+          filters: {
+            ...pS.filters,
+            [filter]: old.filter((f) => f !== value),
+          },
         };
-      },
-      () => {
-        const { filters } = this.state;
-        const { products } = this.props.home;
-        const filterKeys = Object.keys(filters);
-
-        const filteredProducts = products.filter((p) => {
-          for (let f of filterKeys) {
-            const stateFilter = _get(filters, [f], []);
-            const prodFilter =
-              f === "Categories"
-                ? [_get(p, ["category"], "")]
-                : _get(p, [f.toLowerCase()], []);
-
-            const common = _intersection(stateFilter, prodFilter);
-
-            if (common.length !== stateFilter.length) {
-              return false;
-            }
-          }
-
-          return true;
-        });
-
-        this.setState({ products: filteredProducts });
       }
-    );
+
+      return {
+        filters: { ...pS.filters, [filter]: [...old, value] },
+      };
+    });
+  };
+
+  cancelEvent = (e) => {
+    e.stopPropagation();
+  };
+
+  getSortedProducts = (products) => {
+    const { orderBy } = this.state;
+
+    switch (orderBy) {
+      case "A-Z":
+        return _orderBy(products, "name", "asc");
+      case "Z-A":
+        return _orderBy(products, "name", "desc");
+      case "Price Low-High":
+        return _orderBy(products, "price", "asc");
+      case "Price High-Low":
+        return _orderBy(products, "price", "desc");
+      default:
+        return products;
+    }
+  };
+
+  getFilteredProducts = (products) => {
+    const { filters } = this.state;
+    const filterKeys = Object.keys(filters);
+
+    const filteredProducts = products.filter((p) => {
+      for (let f of filterKeys) {
+        const stateFilter = _get(filters, [f], []);
+        const prodFilter =
+          f === "Categories"
+            ? [_get(p, ["category"], "")]
+            : _get(p, [f.toLowerCase()], []);
+        const common = _intersection(stateFilter, prodFilter);
+
+        if (common.length !== stateFilter.length) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    return filteredProducts;
   };
 
   renderFilterCell = (cell, filter, isRadioBtn) => {
@@ -134,10 +139,8 @@ class HomePage extends Component {
           return (
             <li
               key={index}
-              data-filter={filter}
-              data-value={b}
               className="list-group-item"
-              onClick={isRadioBtn ? this.onChangeSortBy : this.onSelectFilter}
+              onClick={this.cancelEvent}
             >
               <div className="input-group">
                 <label
@@ -147,9 +150,14 @@ class HomePage extends Component {
                   <div className="input-group-text">
                     <input
                       name={filter}
+                      data-value={b}
+                      data-filter={filter}
                       id={`${filter}-${b}`}
-                      type={isRadioBtn ? "radio" : "checkbox"}
                       defaultChecked={isChecked}
+                      type={isRadioBtn ? "radio" : "checkbox"}
+                      onChange={
+                        isRadioBtn ? this.onChangeSortBy : this.onSelectFilter
+                      }
                     />
                     &nbsp;&nbsp;
                     {b}
@@ -165,7 +173,7 @@ class HomePage extends Component {
 
   render() {
     const { products } = this.state;
-    const { home, cart, favList } = this.props;
+    const { home, cart, favList, isLoggedIn } = this.props;
     const { leftNav, error, isFetching } = home;
     const itemsInCart = _map(_get(cart, ["items"]), "id");
     const itemsInFavList = _map(_get(favList, ["items"]), "id");
@@ -207,6 +215,7 @@ class HomePage extends Component {
               <div className="col-3" key={p.id}>
                 <ProductCard
                   {...p}
+                  isLoggedIn={isLoggedIn}
                   isInCart={itemsInCart.includes(p.id)}
                   isFavorite={itemsInFavList.includes(p.id)}
                 />
@@ -224,6 +233,7 @@ function mapStateToProps(state) {
     home: state.home,
     cart: state.user.cart,
     favList: state.user.favList,
+    isLoggedIn: state.user.isLoggedIn,
   };
 }
 

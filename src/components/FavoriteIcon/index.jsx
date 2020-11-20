@@ -1,27 +1,32 @@
 import React from "react";
 import cx from "classnames";
 import { connect } from "react-redux";
+import { push } from "connected-react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { addToFav, removeFromFav } from "../../store/actions/user";
 
 function FavoriteIcon(props) {
-  const { item, isFavorite } = props;
+  const { item, isFavorite, isLoggedIn } = props;
 
   const toggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isFavorite) {
-      props.removeFromFav(item.id);
+    if (isLoggedIn) {
+      if (isFavorite) {
+        props.removeFromFav(item.id);
+      } else {
+        const { id, color, size } = item;
+        const payload = { id };
+
+        if (color) payload.color = color;
+        if (size) payload.size = size;
+
+        props.addToFav(payload);
+      }
     } else {
-      const { id, color, size } = item;
-      const payload = { id };
-
-      if (color) payload.color = color;
-      if (size) payload.size = size;
-
-      props.addToFav(payload);
+      props.push("/login");
     }
   };
 
@@ -38,4 +43,4 @@ function FavoriteIcon(props) {
   );
 }
 
-export default connect(null, { addToFav, removeFromFav })(FavoriteIcon);
+export default connect(null, { addToFav, removeFromFav, push })(FavoriteIcon);

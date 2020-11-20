@@ -7,8 +7,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 import rootReducer from "./rootReducer";
 
 const isDev = process.env.NODE_ENV === "development";
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION__ || compose;
-const composeEnhancers = compose;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const middlewares = [thunk];
 
