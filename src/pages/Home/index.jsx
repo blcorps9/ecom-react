@@ -42,7 +42,13 @@ class HomePage extends Component {
   }
 
   componentDidMount() {
-    this.props.getProductsRequest();
+    const { products } = this.props.home;
+
+    if (products.length) {
+      this.setState({ products: this.getSortedProducts(products) });
+    } else {
+      this.props.getProductsRequest();
+    }
   }
 
   onChangeSortBy = (e) => {
