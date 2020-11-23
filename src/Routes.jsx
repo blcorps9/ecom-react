@@ -13,6 +13,7 @@ import ContactUsPage from "./pages/ContactUs";
 import MyAccountPage from "./pages/MyAccount";
 import LoginPage from "./pages/Login";
 import RegistrationPage from "./pages/Registration";
+import PDP from "./pages/PDP";
 
 export default function Routes({ user, isLoggedIn }) {
   return (
@@ -25,6 +26,8 @@ export default function Routes({ user, isLoggedIn }) {
       <Route path="/contact-us" component={ContactUsPage} />
       <Route path="/sale" component={SalePage} />
       <Route path="/cat/:id" component={CategoryPage} />
+      <Route path="/prod/:id/:category/:name" render={(p) => <PDP {...p} />} />
+      {/* <Route path="/prod*" render={(p) => <PDP {...p} />} /> */}
 
       {/** Session routes */}
       <Route path="/my-cart">

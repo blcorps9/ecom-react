@@ -8,3 +8,4 @@ dist
 *.DS_Store
 
 null
+test.js
