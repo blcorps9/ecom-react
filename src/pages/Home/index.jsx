@@ -4,6 +4,7 @@ import _get from "lodash/get";
 import _map from "lodash/map";
 import _isEmpty from "lodash/isEmpty";
 import _orderBy from "lodash/orderBy";
+import { Link } from "react-router-dom";
 import _intersection from "lodash/intersection";
 
 import Accordion from "../../components/Accordion";
@@ -218,14 +219,14 @@ class HomePage extends Component {
           </div>
           <div className="row">
             {_map(products, (p) => (
-              <div className="col-3" key={p.id}>
+              <Link to={p.detailsPage} className="col-3" key={p.id}>
                 <ProductCard
                   {...p}
                   isLoggedIn={isLoggedIn}
                   isInCart={itemsInCart.includes(p.id)}
                   isFavorite={itemsInFavList.includes(p.id)}
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>

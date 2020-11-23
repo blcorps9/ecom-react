@@ -5,6 +5,7 @@ import user from "./reducers/user";
 import common from "./reducers/common";
 
 import home from "../pages/Home/reducer";
+import pdp from "../pages/PDP/reducer";
 
 import cart from "../components/ProductCard/reducer";
 
@@ -15,5 +16,6 @@ export default function rootReducer(history) {
     cart,
     user,
     common,
+    pdp,
   });
 }
