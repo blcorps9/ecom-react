@@ -31,7 +31,7 @@ export default function Routes({ user, isLoggedIn }) {
 
       {/** Session routes */}
       <Route path="/my-cart">
-        <CartPage isLoggedIn={isLoggedIn} />
+        <CartPage />
       </Route>
       <Route path="/my-orders" component={OrdersPage}>
         <OrdersPage isLoggedIn={isLoggedIn} />

@@ -6,7 +6,9 @@ import _range from "lodash/range";
 import { push } from "connected-react-router";
 
 import Hr from "../../components/Hr";
+import Dropdown from "../../components/Dropdown";
 import Swatches from "../../components/Swatches";
+import FavoriteIcon from "../../components/FavoriteIcon";
 
 import { getProdDetails } from "./actions";
 import {
@@ -14,9 +16,6 @@ import {
   onRemoveFromCart,
 } from "../../components/ProductCard/actions";
 import { formatPrice } from "../../utils";
-
-// Task1: Add fav list functionality
-// Task2: Select Quantity functionality
 
 class PDP extends Component {
   state = {
@@ -88,14 +87,22 @@ class PDP extends Component {
     this.props.onRemoveFromCart(id);
   };
 
+  onSelectQuantity = (qty) => {
+    this.setState({ quantity: Number(qty) });
+  };
+
   render() {
     const data = this.props.productDetails;
 
     if (data) {
-      const { cart } = this.props;
-      const { selectedColor, selectedSize } = this.state;
+      const { cart, isLoggedIn, favList } = this.props;
+      const { selectedColor, selectedSize, quantity } = this.state;
       const isInCart = _map(_get(cart, ["items"]), "id").includes(data.id);
-      // const isInFavList = _map(_get(favList, ["items"]), "id");
+      const isInFavList = _map(_get(favList, ["items"]), "id");
+      const qtyOptions = _map(_range(1, (data.stock || 5) + 1), (o) => ({
+        value: o,
+        label: o,
+      }));
 
       const colors = _map(data.colors, (c) => ({
         value: c,
@@ -130,6 +137,16 @@ class PDP extends Component {
                   height="100%"
                   width="100%"
                 />
+                <FavoriteIcon
+                  classes="pdp"
+                  isFavorite={isInFavList.includes(data.id)}
+                  isLoggedIn={isLoggedIn}
+                  item={{
+                    id: data.id,
+                    color: selectedColor,
+                    size: selectedSize,
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -155,6 +172,19 @@ class PDP extends Component {
               />
             )}
 
+            <div className="my-2">
+              <div>Quantity</div>
+              <Dropdown
+                label={quantity}
+                options={qtyOptions}
+                onSelect={this.onSelectQuantity}
+                styles={{
+                  height: "140px",
+                  overflow: "hidden scroll",
+                }}
+              />
+            </div>
+
             <div className="row flex-row align-items-center justify-content-between">
               <div className="col-5 p-0">
                 <div
@@ -165,7 +195,7 @@ class PDP extends Component {
                 </div>
               </div>
               {isInCart && (
-                <div className="col-5 p-5">
+                <div className="col-5 px-5">
                   <div
                     onClick={this.onRemoveFromCart}
                     className="btn btn-secondary w-100"
@@ -199,6 +229,7 @@ export default connect(
   (s) => ({
     productDetails: s.pdp.data,
     cart: s.user.cart,
+    favList: s.user.favList,
     isLoggedIn: s.user.isLoggedIn,
   }),
   {

@@ -6,6 +6,10 @@
   right: 8px;
   cursor: pointer;
 
+  &.pdp {
+    right: 16px;
+  }
+
   &.is-fav,
   &:hover {
     color: $color-pink;

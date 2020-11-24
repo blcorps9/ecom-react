@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { addToFav, removeFromFav } from "../../store/actions/user";
 
 function FavoriteIcon(props) {
-  const { item, isFavorite, isLoggedIn } = props;
+  const { item, isFavorite, isLoggedIn, classes } = props;
 
   const toggle = (e) => {
     e.preventDefault();
@@ -33,7 +33,7 @@ function FavoriteIcon(props) {
   return (
     <div
       onClick={toggle}
-      className={cx("fav-icon-container", { "is-fav": isFavorite })}
+      className={cx("fav-icon-container", { "is-fav": isFavorite }, classes)}
     >
       <FontAwesomeIcon
         size="2x"

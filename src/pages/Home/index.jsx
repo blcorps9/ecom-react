@@ -204,7 +204,7 @@ class HomePage extends Component {
           />
         </div>
         <div className="col-10 h-100">
-          <div className="row" style={{ height: "400px", margin: "24px 9px" }}>
+          {/* <div className="row" style={{ height: "400px", margin: "24px 9px" }}>
             <Carousel
               auto
               delay={3000}
@@ -216,7 +216,7 @@ class HomePage extends Component {
                 { bg: `url(https://loremflickr.com/1000/400?5)` },
               ]}
             />
-          </div>
+          </div> */}
           <div className="row">
             {_map(products, (p) => (
               <Link to={p.detailsPage} className="col-3" key={p.id}>
