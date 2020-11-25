@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import _map from "lodash/map";
 import _find from "lodash/find";
+import { connect } from "react-redux";
+import { Redirect, Link } from "react-router-dom";
 
 import { onRemoveFromCart } from "../../components/ProductCard/actions";
 import { getDashboard } from "../../store/actions/user";
@@ -40,7 +41,7 @@ class CartPage extends Component {
           <table className="table table-hover table-bordered">
             <thead>
               <tr>
-                {tabHeader.map((h, index) => (
+                {_map(tabHeader, (h, index) => (
                   <th key={index} scope="col">
                     {h}
                   </th>
@@ -48,7 +49,7 @@ class CartPage extends Component {
               </tr>
             </thead>
             <tbody>
-              {cart.items.map((i, index) => {
+              {_map(cart.items, (i, index) => {
                 orderTotal += i.price * i.quantity;
 
                 return (
@@ -81,7 +82,9 @@ class CartPage extends Component {
                 Order Total: {formatPrice(orderTotal)}
               </div>
               <div className="col-6">
-                <span className="btn btn-primary">Checkout</span>
+                <Link to="/delivery" className="btn btn-primary">
+                  Checkout
+                </Link>
               </div>
             </div>
           </div>

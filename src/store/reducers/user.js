@@ -1,3 +1,6 @@
+import _map from "lodash/map";
+import _filter from "lodash/filter";
+
 import * as actions from "../actions/user";
 
 const initState = {
@@ -114,6 +117,58 @@ export default function user(state = initState, action) {
         favList: action.payload,
       };
     case actions.REMOVE_ITEM_FROM_FAV_LIST_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.SAVE_ADDRESS_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.SAVE_ADDRESS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        addresses: [...state.addresses, action.payload],
+      };
+    case actions.SAVE_ADDRESS_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.UPDATE_ADDRESS_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.UPDATE_ADDRESS_SUCCESS: {
+      return {
+        ...state,
+        isFetching: false,
+        addresses: _map(state.addresses, (addr) => {
+          if (addr.id === action.payload.id) {
+            return action.payload;
+          }
+
+          return addr;
+        }),
+      };
+    }
+    case actions.UPDATE_ADDRESS_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.DELETE_ADDRESS_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.DELETE_ADDRESS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        addresses: _filter(state.addresses, ({ id }) => id !== action.payload),
+      };
+    case actions.DELETE_ADDRESS_FAILURE:
       return {
         ...state,
         isFetching: false,

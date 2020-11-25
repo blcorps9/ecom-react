@@ -3,6 +3,7 @@ import { push } from "connected-react-router";
 
 import { showLoader, hideLoader } from "./common";
 import { makeRequest } from "../../utils";
+import { makeRequestWithLoader } from "../utils";
 
 export const SET_USER_PROP_VALUE = "SET_USER_PROP_VALUE";
 
@@ -32,6 +33,18 @@ export const REMOVE_ITEM_FROM_FAV_LIST_SUCCESS =
   "REMOVE_ITEM_FROM_FAV_LIST_SUCCESS";
 export const REMOVE_ITEM_FROM_FAV_LIST_FAILURE =
   "REMOVE_ITEM_FROM_FAV_LIST_FAILURE";
+
+export const SAVE_ADDRESS_REQUEST = "SAVE_ADDRESS_REQUEST";
+export const SAVE_ADDRESS_SUCCESS = "SAVE_ADDRESS_SUCCESS";
+export const SAVE_ADDRESS_FAILURE = "SAVE_ADDRESS_FAILURE";
+
+export const UPDATE_ADDRESS_REQUEST = "UPDATE_ADDRESS_REQUEST";
+export const UPDATE_ADDRESS_SUCCESS = "UPDATE_ADDRESS_SUCCESS";
+export const UPDATE_ADDRESS_FAILURE = "UPDATE_ADDRESS_FAILURE";
+
+export const DELETE_ADDRESS_REQUEST = "DELETE_ADDRESS_REQUEST";
+export const DELETE_ADDRESS_SUCCESS = "DELETE_ADDRESS_SUCCESS";
+export const DELETE_ADDRESS_FAILURE = "DELETE_ADDRESS_FAILURE";
 
 export function setUserPropValue(payload) {
   return { type: SET_USER_PROP_VALUE, payload };
@@ -95,6 +108,36 @@ export function removeFromFavSuccess(payload) {
 }
 export function removeFromFavFailure(error) {
   return { type: REMOVE_ITEM_FROM_FAV_LIST_FAILURE, error };
+}
+
+export function saveAddressRequest() {
+  return { type: SAVE_ADDRESS_REQUEST };
+}
+export function saveAddressSuccess(payload) {
+  return { type: SAVE_ADDRESS_SUCCESS, payload };
+}
+export function saveAddressFailure(error) {
+  return { type: SAVE_ADDRESS_FAILURE, error };
+}
+
+export function updateAddressRequest() {
+  return { type: UPDATE_ADDRESS_REQUEST };
+}
+export function updateAddressSuccess(payload) {
+  return { type: UPDATE_ADDRESS_SUCCESS, payload };
+}
+export function updateAddressFailure(error) {
+  return { type: UPDATE_ADDRESS_FAILURE, error };
+}
+
+export function deleteAddressRequest() {
+  return { type: DELETE_ADDRESS_REQUEST };
+}
+export function deleteAddressSuccess(payload) {
+  return { type: DELETE_ADDRESS_SUCCESS, payload };
+}
+export function deleteAddressFailure(error) {
+  return { type: DELETE_ADDRESS_FAILURE, error };
 }
 
 export function doLogin(user) {
@@ -243,27 +286,55 @@ export function addToFav(item) {
 export function removeFromFav(id) {
   return (dispatch) => {
     dispatch(removeFromFavRequest());
-    dispatch(showLoader());
 
-    return makeRequest(`/api/users/shopping-list/remove/${id}`, {
-      method: "DELETE",
-    })
-      .then(async (r) => {
-        const { status } = r;
-        const resp = await r.json();
+    return makeRequestWithLoader(
+      `/api/users/shopping-list/remove/${id}`,
+      { method: "DELETE" },
+      dispatch,
+      removeFromFavSuccess,
+      removeFromFavFailure
+    );
+  };
+}
 
-        dispatch(hideLoader());
+export function saveAddress(address) {
+  return (dispatch) => {
+    dispatch(saveAddressRequest());
 
-        if (status === 200) {
-          return dispatch(removeFromFavSuccess(resp.data));
-        } else {
-          return dispatch(removeFromFavFailure(new Error(resp.message)));
-        }
-      })
-      .catch((e) => {
-        dispatch(hideLoader());
+    return makeRequestWithLoader(
+      "/api/users/addresses",
+      { method: "POST", data: address },
+      dispatch,
+      saveAddressSuccess,
+      saveAddressFailure,
+      201
+    );
+  };
+}
 
-        return dispatch(removeFromFavFailure(e));
-      });
+export function updateAddress(address) {
+  return (dispatch) => {
+    dispatch(updateAddressRequest());
+
+    return makeRequestWithLoader(
+      `/api/users/addresses/${address.id}`,
+      { method: "PUT", data: address },
+      dispatch,
+      updateAddressSuccess,
+      updateAddressFailure
+    );
+  };
+}
+export function deleteAddress(id) {
+  return (dispatch) => {
+    dispatch(deleteAddressRequest());
+
+    return makeRequestWithLoader(
+      `/api/users/addresses/${id}`,
+      { method: "DELETE" },
+      dispatch,
+      () => deleteAddressSuccess(id),
+      deleteAddressFailure
+    );
   };
 }

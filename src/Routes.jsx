@@ -14,6 +14,7 @@ import MyAccountPage from "./pages/MyAccount";
 import LoginPage from "./pages/Login";
 import RegistrationPage from "./pages/Registration";
 import PDP from "./pages/PDP";
+import DeliveryPage from "./pages/Delivery";
 
 export default function Routes({ user, isLoggedIn }) {
   return (
@@ -30,10 +31,17 @@ export default function Routes({ user, isLoggedIn }) {
       {/* <Route path="/prod*" render={(p) => <PDP {...p} />} /> */}
 
       {/** Session routes */}
-      <Route path="/my-cart">
-        <CartPage />
-      </Route>
-      <Route path="/my-orders" component={OrdersPage}>
+      {/*
+        Checkout flow
+        1. /my-cart
+        2. /delivery
+        3. /payment
+        4. /confirmation
+      */}
+      <Route path="/my-cart" component={CartPage} />
+      <Route path="/delivery" component={DeliveryPage} />
+
+      <Route path="/my-orders">
         <OrdersPage isLoggedIn={isLoggedIn} />
       </Route>
       <Route path="/my-account" component={MyAccountPage}>
