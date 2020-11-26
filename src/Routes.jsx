@@ -2,7 +2,6 @@ import React from "react";
 import _isEmpty from "lodash/isEmpty";
 import { Route, Switch } from "react-router-dom";
 
-import CartPage from "./pages/Cart";
 import HomePage from "./pages/Home";
 import SalePage from "./pages/Sale";
 import OrdersPage from "./pages/Orders";
@@ -14,7 +13,11 @@ import MyAccountPage from "./pages/MyAccount";
 import LoginPage from "./pages/Login";
 import RegistrationPage from "./pages/Registration";
 import PDP from "./pages/PDP";
+
+// Checkout flow
+import CartPage from "./pages/Cart";
 import DeliveryPage from "./pages/Delivery";
+import PaymentPage from "./pages/Payment";
 
 export default function Routes({ user, isLoggedIn }) {
   return (
@@ -40,6 +43,7 @@ export default function Routes({ user, isLoggedIn }) {
       */}
       <Route path="/my-cart" component={CartPage} />
       <Route path="/delivery" component={DeliveryPage} />
+      <Route path="/payment" component={PaymentPage} />
 
       <Route path="/my-orders">
         <OrdersPage isLoggedIn={isLoggedIn} />
