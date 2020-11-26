@@ -3,6 +3,7 @@ import _map from "lodash/map";
 import _find from "lodash/find";
 import _isEmpty from "lodash/isEmpty";
 import { connect } from "react-redux";
+import { push } from "connected-react-router";
 
 import AddressForm from "../../components/AddressForm";
 import AddressCard from "../../components/AddressCard";
@@ -10,6 +11,7 @@ import {
   saveAddress,
   updateAddress,
   deleteAddress,
+  saveCheckoutData,
 } from "../../store/actions/user";
 
 class DeliveryPage extends Component {
@@ -42,6 +44,18 @@ class DeliveryPage extends Component {
       const addrId = e.currentTarget.getAttribute("data-value");
 
       this.setState({ showForm: true, editAddressId: addrId });
+    }
+  };
+
+  onAddressSelect = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const addressId = e.currentTarget.getAttribute("data-value");
+
+    if (addressId) {
+      this.props.saveCheckoutData({ addressId });
+      this.props.push("/payment");
     }
   };
 
@@ -84,6 +98,10 @@ class DeliveryPage extends Component {
 
     if (editAddressId) {
       addressToBeEdited = _find(addresses, ({ id }) => id === editAddressId);
+
+      const [firstName, lastName] = addressToBeEdited.fullName.split(" ");
+
+      addressToBeEdited = { ...addressToBeEdited, firstName, lastName };
     }
 
     const isEdit = !_isEmpty(addressToBeEdited);
@@ -106,6 +124,7 @@ class DeliveryPage extends Component {
                 address={addr}
                 onEdit={this.onClickEdit}
                 onDelete={this.onClickDelete}
+                onSelect={this.onAddressSelect}
               />
             </div>
           ))}
@@ -126,7 +145,9 @@ class DeliveryPage extends Component {
 }
 
 export default connect((s) => ({ addresses: s.user.addresses }), {
+  push,
   saveAddress,
   updateAddress,
   deleteAddress,
+  saveCheckoutData,
 })(DeliveryPage);

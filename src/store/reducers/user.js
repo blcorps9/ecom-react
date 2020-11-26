@@ -12,6 +12,8 @@ const initState = {
   favList: {},
   addresses: [],
 
+  checkoutData: {}, // { cardId, addressId }
+
   error: null,
   isFetching: false,
   isLoggedIn: false,
@@ -175,10 +177,68 @@ export default function user(state = initState, action) {
         error: action.error,
       };
 
+    case actions.SAVE_CARDS_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.SAVE_CARDS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        cards: [...state.cards, action.payload],
+      };
+    case actions.SAVE_CARDS_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.DELETE_CARD_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.DELETE_CARD_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        cards: _filter(state.cards, ({ id }) => id !== action.payload),
+      };
+    case actions.DELETE_CARD_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.UPDATE_CARD_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.UPDATE_CARD_SUCCESS: {
+      return {
+        ...state,
+        isFetching: false,
+        cards: _map(state.cards, (card) => {
+          if (card.id === action.payload.id) {
+            return action.payload;
+          }
+
+          return card;
+        }),
+      };
+    }
+    case actions.UPDATE_CARD_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
     case actions.SET_USER_PROP_VALUE:
       return {
         ...state,
         ...action.payload,
+      };
+
+    case actions.SAVE_CHECKOUT_DATA:
+      return {
+        ...state,
+        checkoutData: { ...state.checkoutData, ...action.payload },
       };
     default:
       return state;

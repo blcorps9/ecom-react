@@ -2,15 +2,21 @@ import React from "react";
 import _compact from "lodash/compact";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function AddressCard({ address, onEdit, onDelete, onSelect }) {
+function someMagic(num) {
+  // do somehitng
+
+  return num;
+}
+
+export default function CardCard({ card, onEdit, onDelete, onSelect }) {
   return (
     <div className="card">
       <div className="card-header d-flex justify-content-between">
-        <span>{address.line1}</span>
+        <span>{card.holderName}</span>
         <span>
           <span
             onClick={onEdit}
-            data-value={address.id}
+            data-value={card.id}
             style={{ cursor: "pointer" }}
           >
             <FontAwesomeIcon icon={{ prefix: "far", iconName: "edit" }} />
@@ -18,7 +24,7 @@ export default function AddressCard({ address, onEdit, onDelete, onSelect }) {
           &nbsp;&nbsp;&nbsp;
           <span
             onClick={onDelete}
-            data-value={address.id}
+            data-value={card.id}
             style={{ cursor: "pointer" }}
           >
             <FontAwesomeIcon icon={{ prefix: "far", iconName: "trash-alt" }} />
@@ -27,22 +33,15 @@ export default function AddressCard({ address, onEdit, onDelete, onSelect }) {
       </div>
       <div className="card-body">
         <h5 className="card-title">
-          {address.fullName} - {address.contactNo}
+          {card.holderName} - {someMagic(card.cardNumber)}
         </h5>
-        <p className="card-text">
-          {_compact([address.line1, address.line2, address.street]).join(", ")}
-        </p>
-        <p className="card-text">
-          {_compact([address.city, address.state, address.postalCode]).join(
-            ", "
-          )}
-        </p>
         <div
           onClick={onSelect}
-          data-value={address.id}
-          className="btn btn-primary"
+          data-value={card.id}
+          className="btn btn-seconday"
+          style={{ cursor: "not-allowed" }}
         >
-          Deliver to this address
+          Pay with this card
         </div>
       </div>
     </div>
