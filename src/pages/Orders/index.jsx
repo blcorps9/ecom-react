@@ -1,7 +1,9 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 
-export default function OrdersPage({ isLoggedIn }) {
+function OrdersPage({ isLoggedIn, orders }) {
+  console.log(" orders =----> ", orders);
   if (isLoggedIn) return "This is a Orders page.";
 
   return (
@@ -11,3 +13,8 @@ export default function OrdersPage({ isLoggedIn }) {
     />
   );
 }
+
+export default connect((s) => ({
+  orders: s.user.orders,
+  isLoggedIn: s.user.isLoggedIn,
+}))(OrdersPage);

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import _map from "lodash/map";
 import _find from "lodash/find";
+import _size from "lodash/size";
 import { connect } from "react-redux";
 import { Redirect, Link } from "react-router-dom";
 
@@ -23,6 +24,8 @@ class CartPage extends Component {
     const { isLoggedIn, cart } = this.props;
 
     if (isLoggedIn) {
+      if (!_size(cart.items)) return <Redirect to="/" />;
+
       const tabHeader = ["#", "Name", "Brand", "Quantity", "Price"];
       const hasSize = !!_find(cart.items, (i) => i.size);
       const hasColor = !!_find(cart.items, (i) => i.color);

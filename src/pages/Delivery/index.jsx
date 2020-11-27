@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import _map from "lodash/map";
 import _find from "lodash/find";
+import _size from "lodash/size";
 import _isEmpty from "lodash/isEmpty";
 import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
 import { push } from "connected-react-router";
 
 import AddressForm from "../../components/AddressForm";
@@ -93,8 +95,10 @@ class DeliveryPage extends Component {
 
   render() {
     const { showForm, editAddressId } = this.state;
-    const { addresses } = this.props;
+    const { addresses, cart } = this.props;
     let addressToBeEdited = null;
+
+    if (!_isEmpty(cart) && !_size(cart.items)) return <Redirect to="/" />;
 
     if (editAddressId) {
       addressToBeEdited = _find(addresses, ({ id }) => id === editAddressId);
@@ -144,10 +148,13 @@ class DeliveryPage extends Component {
   }
 }
 
-export default connect((s) => ({ addresses: s.user.addresses }), {
-  push,
-  saveAddress,
-  updateAddress,
-  deleteAddress,
-  saveCheckoutData,
-})(DeliveryPage);
+export default connect(
+  (s) => ({ addresses: s.user.addresses, cart: s.user.cart }),
+  {
+    push,
+    saveAddress,
+    updateAddress,
+    deleteAddress,
+    saveCheckoutData,
+  }
+)(DeliveryPage);

@@ -1,4 +1,5 @@
 import _map from "lodash/map";
+import _last from "lodash/last";
 import _filter from "lodash/filter";
 
 import * as actions from "../actions/user";
@@ -12,6 +13,7 @@ const initState = {
   favList: {},
   addresses: [],
 
+  lastOrder: {},
   checkoutData: {}, // { cardId, addressId }
 
   error: null,
@@ -85,6 +87,7 @@ export default function user(state = initState, action) {
         ...state,
         isFetching: false,
         isLoggedIn: true,
+        lastOrder: _last(_map(action.payload.orders)),
         ...action.payload,
       };
     case actions.GET_DASHBOARD_FAILURE:
@@ -223,6 +226,22 @@ export default function user(state = initState, action) {
       };
     }
     case actions.UPDATE_CARD_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: action.error,
+      };
+
+    case actions.PLACE_ORDER_REQUEST:
+      return { ...state, isFetching: true };
+    case actions.PLACE_ORDER_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        lastOrder: action.payload,
+        orders: [...state.orders, action.payload],
+      };
+    case actions.PLACE_ORDER_FAILURE:
       return {
         ...state,
         isFetching: false,

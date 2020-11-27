@@ -9,6 +9,7 @@ import Swatches from "../Swatches";
 import FavoriteIcon from "../FavoriteIcon";
 import { formatPrice } from "../../utils";
 import { addToCart, onRemoveFromCart } from "./actions";
+import { getDashboard } from "../../store/actions/user";
 
 class ProductCard extends Component {
   constructor(props) {
@@ -53,7 +54,7 @@ class ProductCard extends Component {
       if (color) item.color = color;
       if (size) item.size = size;
 
-      this.props.addToCart(item);
+      this.props.addToCart(item).then(this.props.getDashboard);
     } else {
       this.props.push("/login");
     }
@@ -154,6 +155,9 @@ class ProductCard extends Component {
   }
 }
 
-export default connect(null, { addToCart, onRemoveFromCart, push })(
-  ProductCard
-);
+export default connect(null, {
+  addToCart,
+  onRemoveFromCart,
+  push,
+  getDashboard,
+})(ProductCard);

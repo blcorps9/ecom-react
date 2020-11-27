@@ -5,30 +5,7 @@ import _range from "lodash/range";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { detectCardType } from "../../utils";
-
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sept",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-const CARD_NUM_LENGTHS = {
-  visa: 16,
-  mastercard: 16,
-  amex: 15,
-  "diners-club": 14,
-  discover: 16,
-  jcb: 16,
-};
+import { MONTHS_SHORT, CARD_NUM_LENGTHS } from "../../config";
 
 export default class CardForm extends Component {
   constructor(props) {
@@ -132,14 +109,14 @@ export default class CardForm extends Component {
             />
           </div>
           <div className="form-group col-4">
-            <label htmlFor="expiryYear">Expiry Year</label>
+            <label htmlFor="expiryMonth">Expiry Month</label>
             <select
               className="form-control"
               id="expiryMonth"
               name="expiryMonth"
               defaultValue={isEdit ? card.expiryMonth : 0}
             >
-              {MONTHS.map((m, index) => (
+              {MONTHS_SHORT.map((m, index) => (
                 <option value={index} key={index}>
                   {m}
                 </option>

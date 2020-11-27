@@ -18,6 +18,7 @@ import PDP from "./pages/PDP";
 import CartPage from "./pages/Cart";
 import DeliveryPage from "./pages/Delivery";
 import PaymentPage from "./pages/Payment";
+import ConfirmationPage from "./pages/Confirmation";
 
 export default function Routes({ user, isLoggedIn }) {
   return (
@@ -44,6 +45,7 @@ export default function Routes({ user, isLoggedIn }) {
       <Route path="/my-cart" component={CartPage} />
       <Route path="/delivery" component={DeliveryPage} />
       <Route path="/payment" component={PaymentPage} />
+      <Route path="/confirmation" component={ConfirmationPage} />
 
       <Route path="/my-orders">
         <OrdersPage isLoggedIn={isLoggedIn} />

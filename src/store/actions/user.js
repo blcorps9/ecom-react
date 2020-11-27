@@ -60,6 +60,10 @@ export const UPDATE_CARD_REQUEST = "UPDATE_CARD_REQUEST";
 export const UPDATE_CARD_SUCCESS = "UPDATE_CARD_SUCCESS";
 export const UPDATE_CARD_FAILURE = "UPDATE_CARD_FAILURE";
 
+export const PLACE_ORDER_REQUEST = "PLACE_ORDER_REQUEST";
+export const PLACE_ORDER_SUCCESS = "PLACE_ORDER_SUCCESS";
+export const PLACE_ORDER_FAILURE = "PLACE_ORDER_FAILURE";
+
 export function saveCheckoutData(payload) {
   return { type: SAVE_CHECKOUT_DATA, payload };
 }
@@ -186,6 +190,16 @@ export function updateCardSuccess(payload) {
 }
 export function updateCardFailure(error) {
   return { type: UPDATE_CARD_FAILURE, error };
+}
+
+export function placeOrderRequest() {
+  return { type: PLACE_ORDER_REQUEST };
+}
+export function placeOrderSuccess(payload) {
+  return { type: PLACE_ORDER_SUCCESS, payload };
+}
+export function placeOrderFailure(error) {
+  return { type: PLACE_ORDER_FAILURE, error };
 }
 
 export function doLogin(user) {
@@ -427,6 +441,20 @@ export function updateCard(card) {
       dispatch,
       updateCardSuccess,
       updateCardFailure
+    );
+  };
+}
+
+export function placeOrder(order) {
+  return (dispatch) => {
+    dispatch(placeOrderRequest());
+
+    return makeRequestWithLoader(
+      "/api/orders",
+      { method: "POST", data: order },
+      dispatch,
+      placeOrderSuccess,
+      placeOrderFailure
     );
   };
 }

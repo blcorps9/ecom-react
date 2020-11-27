@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import _map from "lodash/map";
 import _find from "lodash/find";
+import _reduce from "lodash/reduce";
 import _isEmpty from "lodash/isEmpty";
 
 import CardCard from "../../components/CardCard";
@@ -10,11 +11,18 @@ import {
   saveCard,
   updateCard,
   deleteCard,
-  saveCheckoutData,
+  placeOrder,
+  getDashboard,
 } from "../../store/actions/user";
 
 class PaymentPage extends Component {
   state = { showForm: false, editCardId: "" };
+
+  componentDidMount() {
+    if (this.props.routerAction === "POP") {
+      this.props.history.push("/delivery");
+    }
+  }
 
   toggleCardForm = (e) => {
     e.preventDefault();
@@ -69,8 +77,6 @@ class PaymentPage extends Component {
     e.preventDefault();
     e.stopPropagation();
 
-    console.log(" onClickEdit =----> ");
-
     if (!this.state.showForm) {
       const cardId = e.currentTarget.getAttribute("data-value");
 
@@ -78,15 +84,33 @@ class PaymentPage extends Component {
     }
   };
 
-  onCardSelect = (e) => {
+  onPayNow = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const cardId = e.currentTarget.getAttribute("data-value");
+    const formData = {};
 
-    if (addressId) {
-      this.props.saveCheckoutData({ cardId });
-      // this.props.push("/payment");
+    for (let f of e.target) {
+      if (f.type === "checkbox") {
+        formData[f.name] = f.checked;
+      } else if (f.type !== "submit") {
+        formData[f.name] = f.value;
+      }
+    }
+
+    if (formData.cardId) {
+      const { checkoutData, cart } = this.props;
+
+      this.props
+        .placeOrder({
+          cart: cart.id,
+          card: formData.cardId,
+          address: checkoutData.addressId,
+        })
+        .then(this.props.getDashboard)
+        .then(() => {
+          this.props.history.push("/confirmation");
+        });
     }
   };
 
@@ -119,12 +143,12 @@ class PaymentPage extends Component {
         </div>
         <div className="row">
           {_map(cards, (card) => (
-            <div className="col-12 my-2">
+            <div className="col-12 my-2" key={card.id}>
               <CardCard
                 card={card}
                 onEdit={this.onClickEdit}
                 onDelete={this.onClickDelete}
-                onSelect={this.onCardSelect}
+                onPayNow={this.onPayNow}
               />
             </div>
           ))}
@@ -144,9 +168,18 @@ class PaymentPage extends Component {
   }
 }
 
-export default connect((s) => ({ cards: s.user.cards }), {
-  saveCard,
-  updateCard,
-  deleteCard,
-  saveCheckoutData,
-})(PaymentPage);
+export default connect(
+  (s) => ({
+    cart: s.user.cart,
+    cards: s.user.cards,
+    routerAction: s.router.action,
+    checkoutData: s.user.checkoutData,
+  }),
+  {
+    saveCard,
+    updateCard,
+    deleteCard,
+    placeOrder,
+    getDashboard,
+  }
+)(PaymentPage);
