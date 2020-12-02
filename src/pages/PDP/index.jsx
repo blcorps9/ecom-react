@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import cx from "classnames";
 import _get from "lodash/get";
 import _map from "lodash/map";
 import _range from "lodash/range";
@@ -153,8 +154,23 @@ class PDP extends Component {
           <div className="col-6">
             <h1>{data.name}</h1>
             <h4>{data.brand}</h4>
+            <h5 className="badge badge-danger">{data.promo}</h5>
             <Hr />
-            <h2>{formatPrice(data.price)}</h2>
+            <div className="row">
+              <div
+                className={cx("p-0", {
+                  "text-secondary": data.salePrice,
+                })}
+                style={data.salePrice ? { textDecoration: "line-through" } : {}}
+              >
+                {formatPrice(data.price)}
+              </div>
+              {data.salePrice && (
+                <div className="ml-2 p-0 text-danger">
+                  {formatPrice(data.salePrice)}
+                </div>
+              )}
+            </div>
             {colors.length > 0 && (
               <Swatches
                 heading="Colors"

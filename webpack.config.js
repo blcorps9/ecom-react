@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const path = require("path");
+const webpack = require("webpack");
 // const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -56,6 +57,9 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      STRIPE_KEY: JSON.stringify(process.env.STRIPE_KEY),
+    }),
     new HtmlWebpackPlugin({
       template: path.join(SRC_DIR, "index.html"),
     }),

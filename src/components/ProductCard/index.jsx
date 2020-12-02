@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import cx from "classnames";
 import _get from "lodash/get";
 import { connect } from "react-redux";
 import _isEmpty from "lodash/isEmpty";
@@ -74,10 +75,11 @@ class ProductCard extends Component {
       image,
       name,
       brand,
-      description,
+      promo,
       colors,
       sizes,
       price,
+      salePrice,
       isInCart,
       isFavorite,
       isLoggedIn,
@@ -100,10 +102,12 @@ class ProductCard extends Component {
         </div>
         <div className="card-body">
           <div className="row">
-            <h5 className="card-title">
+            <h5 className="col-12 card-title">
               {name} - {brand}
             </h5>
-            <p className="card-text">{description}</p>
+            <div class="col-12">
+              <span className="badge badge-danger">{promo.label}</span>
+            </div>
           </div>
           {!_isEmpty(colors) && (
             <div className="row colors swatches my-2">
@@ -132,7 +136,20 @@ class ProductCard extends Component {
             </div>
           )}
           <div className="row flex-row align-items-center ">
-            <div className="col-12 p-0">{formatPrice(price)}</div>
+            <div
+              className={cx("p-0", {
+                "col-6 text-secondary": salePrice,
+                "col-12": !salePrice,
+              })}
+              style={salePrice ? { textDecoration: "line-through" } : {}}
+            >
+              {formatPrice(price)}
+            </div>
+            {salePrice && (
+              <div className="col-6 p-0 text-danger">
+                {formatPrice(salePrice)}
+              </div>
+            )}
           </div>
           <div className="row cta m-0 flex-row align-items-center justify-content-between">
             <div className="col-8 p-0">

@@ -13,6 +13,7 @@ import MyAccountPage from "./pages/MyAccount";
 import LoginPage from "./pages/Login";
 import RegistrationPage from "./pages/Registration";
 import PDP from "./pages/PDP";
+import CheckoutPage from "./pages/Checkout";
 
 // Checkout flow
 import CartPage from "./pages/Cart";
@@ -46,6 +47,9 @@ export default function Routes({ user, isLoggedIn }) {
       <Route path="/delivery" component={DeliveryPage} />
       <Route path="/payment" component={PaymentPage} />
       <Route path="/confirmation" component={ConfirmationPage} />
+
+      {/* Stripe Checkout */}
+      <Route path="/checkout" component={CheckoutPage} />
 
       <Route path="/my-orders">
         <OrdersPage isLoggedIn={isLoggedIn} />

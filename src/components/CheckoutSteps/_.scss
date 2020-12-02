@@ -3,8 +3,8 @@
   width: 100%;
   display: flex;
 
-  $circle-size: 24px;
-  $bar-size: 2px;
+  --circle-size: 24px;
+  --bar-size: 2px;
 
   .step {
     flex: 1;
@@ -19,9 +19,9 @@
     &:after {
       content: "";
       position: absolute;
-      height: $bar-size;
-      width: calc(50% - ($circle-size / 2));
-      top: 39%;
+      height: var(--bar-size);
+      width: calc(50% - (var(--circle-size) / 2));
+      top: 25%;
       background-color: $color-grey;
     }
 
@@ -49,9 +49,9 @@
 
     .step-circle {
       position: relative;
-      height: $circle-size;
-      width: $circle-size;
-      border: $bar-size solid $color-dodgerblue;
+      height: var(--circle-size);
+      width: var(--circle-size);
+      border: var(--bar-size) solid $color-dodgerblue;
       border-radius: 50%;
 
       justify-content: center;

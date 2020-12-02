@@ -7,10 +7,18 @@ export function uuidv4() {
   });
 }
 
+const currencyMap = {
+  "en-IN": "inr",
+  "en-US": "usd",
+  "en-GB": "eur",
+  "en-JP": "jpy",
+};
 export function formatPrice(price) {
-  return Number(price).toLocaleString("en-IN", {
+  const lang = navigator.language;
+
+  return Number(price).toLocaleString(lang, {
     style: "currency",
-    currency: "INR",
+    currency: currencyMap[lang] || "usd",
   });
 }
 
@@ -71,4 +79,21 @@ export function detectCardType(number) {
       return key;
     }
   }
+}
+
+export function maskCardNumber(num) {
+  const len = num.length;
+  const last4 = num.substr(-4);
+
+  return last4.padStart(len, "x");
+}
+
+export function isPastDate(date) {
+  const today = new Date();
+
+  return (
+    date.getFullYear() <= today.getFullYear() &&
+    date.getMonth() <= today.getMonth() &&
+    date.getDate() < today.getDate()
+  );
 }
