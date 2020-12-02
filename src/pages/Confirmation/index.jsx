@@ -35,7 +35,7 @@ function ConfirmationPage({ lastOrder }) {
           </div>
           <div className="col-12">
             {lastOrder.items.map((item) => {
-              return <div>{item.id}</div>;
+              return <div key={item.id}>{item.id}</div>;
             })}
           </div>
         </div>

@@ -35,9 +35,10 @@ export default class Dropdown extends Component {
           {label}
         </button>
         <div className={cx("dropdown-menu", { show: isOpen })} style={styles}>
-          {options.map((o) => (
+          {options.map((o, index) => (
             <span
-              class="dropdown-item"
+              key={index}
+              className="dropdown-item"
               data-value={o.value}
               onClick={this.onSelect}
             >

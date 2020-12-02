@@ -5,16 +5,10 @@ import _compact from "lodash/compact";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { MONTHS_SHORT } from "../../config";
-
-function maskCardNumber(num) {
-  const len = num.length;
-  const last4 = num.substr(-4);
-
-  return last4.padStart(len, "x");
-}
+import { maskCardNumber } from "../../utils";
 
 export default class CardCard extends Component {
-  state = { show: false, hasValue: false };
+  state = { show: false, hasValue: false, selectedCard: "" };
 
   onMouseEnter = (e) => {
     e.preventDefault();
@@ -35,6 +29,15 @@ export default class CardCard extends Component {
     e.stopPropagation();
 
     this.setState({ hasValue: true });
+  };
+
+  onSelectCard = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const selectedCard = e.currentTarget.getAttribute("data-value");
+
+    if (selectedCard) this.setState({ selectedCard });
   };
 
   render() {
@@ -84,20 +87,20 @@ export default class CardCard extends Component {
                     type="text"
                     className="form-control"
                     id="cvv"
+                    required
                     name="cvv"
                     minLength={3}
                     maxLength={3}
                     placeholder="123"
-                    required
                     onKeyUp={this.onKeyUp}
                   />
                 </div>
                 <div className="form-group col-4">
                   <label htmlFor="expiryMonth">Expiry Month</label>
                   <select
-                    className="form-control"
                     id="expiryMonth"
                     name="expiryMonth"
+                    className="form-control"
                   >
                     {MONTHS_SHORT.map((m, index) => (
                       <option value={index} key={index}>
@@ -110,9 +113,9 @@ export default class CardCard extends Component {
                   <label htmlFor="expiryYear">Expiry Year</label>
                   <select
                     required
-                    className="form-control"
                     id="expiryYear"
                     name="expiryYear"
+                    className="form-control"
                   >
                     {_range(currentYear, currentYear + 10).map((y) => (
                       <option value={y} key={y}>
@@ -134,17 +137,17 @@ export default class CardCard extends Component {
             />
 
             <button
-              type="submit"
               id="pay-now"
+              type="submit"
               data-value={card.id}
+              disabled={!hasValue}
               className={cx("btn", {
                 "btn-primary": hasValue,
                 "btn-secondary": !hasValue,
               })}
-              disabled={!hasValue}
               style={{ cursor: hasValue ? "pointer" : "not-allowed" }}
             >
-              Pay with this card
+              {hasValue ? "Pay Now" : "Pay with this card"}
             </button>
           </form>
         </div>
