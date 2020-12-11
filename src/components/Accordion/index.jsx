@@ -24,7 +24,7 @@ export default class Accordion extends Component {
 
   render() {
     const { openKey } = this.state;
-    const cells = this.props.cells;
+    const { cells } = this.props;
 
     return (
       <div className="accordion">
