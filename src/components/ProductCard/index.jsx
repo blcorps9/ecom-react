@@ -1,8 +1,12 @@
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable no-undef */
+/* eslint-disable operator-linebreak */
 import React, { Component } from "react";
 import cx from "classnames";
 import _get from "lodash/get";
 import { connect } from "react-redux";
 import _isEmpty from "lodash/isEmpty";
+import _debounce from "lodash/debounce";
 import { push } from "connected-react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -12,15 +16,47 @@ import { formatPrice } from "../../utils";
 import { addToCart, onRemoveFromCart } from "./actions";
 import { getDashboard } from "../../store/actions/user";
 
+function isElemTopVisible(elem) {
+  const rect = elem.getBoundingClientRect();
+
+  return rect.top >= 0 && rect.top <= window.innerHeight;
+}
+
 class ProductCard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       quantity: 1,
-      color: _get(props, ["colors", 0], ""),
       size: _get(props, ["sizes", 0], ""),
+      color: _get(props, ["colors", 0], ""),
+
+      loadImage: false,
     };
+
+    this.cardNode = React.createRef();
+    this.onScroll = _debounce(this.onScroll.bind(this), 350, {
+      trailing: true,
+      leading: false,
+    });
+  }
+
+  componentDidMount() {
+    if (this.cardNode && this.cardNode.current) {
+      this.onScroll();
+    }
+
+    window.addEventListener("scroll", this.onScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.onScroll);
+  }
+
+  onScroll() {
+    if (!this.state.loadImage && isElemTopVisible(this.cardNode.current)) {
+      this.setState({ loadImage: true });
+    }
   }
 
   onSelectColor = (e) => {
@@ -69,7 +105,7 @@ class ProductCard extends Component {
   };
 
   render() {
-    const { color, size } = this.state;
+    const { color, size, loadImage } = this.state;
     const {
       id,
       image,
@@ -86,14 +122,16 @@ class ProductCard extends Component {
     } = this.props;
 
     return (
-      <div className="product-card card m-2">
+      <div className="product-card card m-2" ref={this.cardNode}>
         <div className="card-img-top">
-          <img
-            className="prod-img"
-            src={image}
-            alt={`${name} - ${brand}`}
-            height="100%"
-          />
+          {loadImage && (
+            <img
+              src={image}
+              height="100%"
+              className="prod-img"
+              alt={`${name} - ${brand}`}
+            />
+          )}
           <FavoriteIcon
             isFavorite={isFavorite}
             isLoggedIn={isLoggedIn}
@@ -105,7 +143,7 @@ class ProductCard extends Component {
             <h5 className="col-12 card-title">
               {name} - {brand}
             </h5>
-            <div class="col-12">
+            <div className="col-12">
               <span className="badge badge-danger">{promo.label}</span>
             </div>
           </div>

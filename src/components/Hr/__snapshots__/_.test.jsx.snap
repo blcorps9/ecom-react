@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Hr /> renders successfully 1`] = `
+<span
+  className="hr"
+/>
+`;

@@ -1,3 +1,8 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable operator-linebreak */
+/* eslint-disable no-restricted-syntax */
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import _get from "lodash/get";
@@ -20,6 +25,16 @@ class HomePage extends Component {
     products: [],
   };
 
+  componentDidMount() {
+    const { products } = this.props.home;
+
+    if (products.length) {
+      this.setState({ products: this.getSortedProducts(products) });
+    } else {
+      this.props.getProductsRequest();
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
     const { products } = this.props.home;
 
@@ -39,16 +54,6 @@ class HomePage extends Component {
       this.setState((pS) => ({
         products: this.getSortedProducts(pS.products),
       }));
-    }
-  }
-
-  componentDidMount() {
-    const { products } = this.props.home;
-
-    if (products.length) {
-      this.setState({ products: this.getSortedProducts(products) });
-    } else {
-      this.props.getProductsRequest();
     }
   }
 
@@ -112,7 +117,7 @@ class HomePage extends Component {
     const filterKeys = Object.keys(filters);
 
     const filteredProducts = products.filter((p) => {
-      for (let f of filterKeys) {
+      for (const f of filterKeys) {
         const stateFilter = _get(filters, [f], []);
         const prodFilter =
           f === "Categories"
@@ -189,18 +194,16 @@ class HomePage extends Component {
       <div className="row justify-content-center">
         <div className="col-2 p-2 border-right">
           <Accordion
-            cells={leftNav.map((cell, index) => {
-              return {
-                id: String(index),
-                header: cell.header,
-                headerRightIcon: cell.rightIcon || "",
-                body: this.renderFilterCell(
-                  cell.body,
-                  cell.header,
-                  cell.radioBtn
-                ),
-              };
-            })}
+            cells={leftNav.map((cell, index) => ({
+              id: String(index),
+              header: cell.header,
+              headerRightIcon: cell.rightIcon || "",
+              body: this.renderFilterCell(
+                cell.body,
+                cell.header,
+                cell.radioBtn
+              ),
+            }))}
           />
         </div>
         <div className="col-10 h-100">

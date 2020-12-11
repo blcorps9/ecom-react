@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -76,8 +76,8 @@ function Header(props) {
               const query = e.target.query.value;
 
               props.getProductsRequest({ name: query });
-            } catch (e) {
-              console.log(" SearchBoxError =----> ", e.message);
+            } catch (err) {
+              console.log(" SearchBoxError =----> ", err.message);
             }
           }}
         >

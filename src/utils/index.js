@@ -1,6 +1,8 @@
 export function uuidv4() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    // eslint-disable-next-line no-bitwise
     const r = (Math.random() * 16) | 0;
+    // eslint-disable-next-line eqeqeq,no-bitwise
     const v = c == "x" ? r : (r & 0x3) | 0x8;
 
     return v.toString(16);
@@ -8,17 +10,18 @@ export function uuidv4() {
 }
 
 const currencyMap = {
-  "en-IN": "inr",
-  "en-US": "usd",
-  "en-GB": "eur",
-  "en-JP": "jpy",
+  "en-IN": "INR",
+  "en-US": "USD",
+  "en-GB": "EUR",
+  "en-JP": "JPY",
 };
-export function formatPrice(price) {
-  const lang = navigator.language;
+export function formatPrice(price, lang) {
+  // eslint-disable-next-line no-param-reassign
+  lang = lang || navigator.language;
 
   return Number(price).toLocaleString(lang, {
     style: "currency",
-    currency: currencyMap[lang] || "usd",
+    currency: currencyMap[lang] || "USD",
   });
 }
 
@@ -74,11 +77,14 @@ export function detectCardType(number) {
     jcb: /^(?:2131|1800|35)[0-9]{0,}$/,
   };
 
-  for (let key in re) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in re) {
     if (re[key].test(number)) {
       return key;
     }
   }
+
+  return "";
 }
 
 export function maskCardNumber(num) {
@@ -92,8 +98,8 @@ export function isPastDate(date) {
   const today = new Date();
 
   return (
-    date.getFullYear() <= today.getFullYear() &&
-    date.getMonth() <= today.getMonth() &&
-    date.getDate() < today.getDate()
+    date.getFullYear() <= today.getFullYear()
+    && date.getMonth() <= today.getMonth()
+    && date.getDate() < today.getDate()
   );
 }
